@@ -2,6 +2,10 @@ package com.jumpstart.config;
 
 public class AppConstants {
 
+	// web site available roles constants variables
+	public static final Integer ADMIN_USER = 501;
+	public static final Integer NORMAL_USER = 502;
+
 	// pagination constants variables for user post
 	public static final String POST_PAGE_NUMBER = "0";
 	public static final String POST_PAGE_SIZE = "10";
