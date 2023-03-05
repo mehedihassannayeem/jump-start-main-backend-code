@@ -18,12 +18,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "accounts")
 @Setter
 @Getter
 @NoArgsConstructor
+@ToString
 public class Account {
 
 	@Id

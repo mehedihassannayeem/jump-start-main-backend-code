@@ -12,10 +12,14 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.jumpstart.config.AppConstants;
 import com.jumpstart.entities.Account;
 import com.jumpstart.entities.AuthProvider;
+import com.jumpstart.entities.Role;
+import com.jumpstart.entities.User;
 import com.jumpstart.exception.OAuth2AuthenticationProcessingException;
 import com.jumpstart.repository.AccountRepository;
+import com.jumpstart.repository.RoleRepository;
 import com.jumpstart.security.UserPrincipal;
 import com.jumpstart.security.oauth2.user.OAuth2UserInfo;
 import com.jumpstart.security.oauth2.user.OAuth2UserInfoFactory;
@@ -25,6 +29,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	@Autowired
 	private AccountRepository accountRepository;
+	@Autowired
+	private RoleRepository roleRepository;
 
 	/**
 	 * this method loads the OAuth requesting user
@@ -81,7 +87,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	 */
 	private Account registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
 		Account account = new Account();
-//		User user = new User();
+		User user = new User();
 
 		account.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
 		account.setProviderId(oAuth2UserInfo.getId());
@@ -89,11 +95,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		account.setEmail(oAuth2UserInfo.getEmail());
 
 		// setting user
-//		user.setName(oAuth2UserInfo.getName());
-//		user.setImageUrl(oAuth2UserInfo.getImageUrl());
-//		user.setLocalImage(false);
-//
-//		account.setUtbl(user);
+		user.setName(oAuth2UserInfo.getName());
+		user.setImageUrl(oAuth2UserInfo.getImageUrl());
+		user.setLocalImage(false);
+
+		// getting role
+		Role role = this.roleRepository.findById(AppConstants.NORMAL_USER).get();
+		// setting role
+		user.getRoles().add(role);
+
+		account.setUtbl(user);
 		return accountRepository.save(account);
 	}
 
@@ -102,14 +113,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	 */
 	private Account updateExistingUser(Account existingUser, OAuth2UserInfo oAuth2UserInfo) {
 
-//		User user = existingUser.getUtbl();
-//
-//		// profile image will update if the user didn't upload custom image
-//		if (!user.isLocalImage()) {
-//			user.setImageUrl(oAuth2UserInfo.getImageUrl());
-//		}
-//
-//		existingUser.setUtbl(user);
+		User user = existingUser.getUtbl();
+
+		// profile image will update if the user didn't upload custom image
+		if (!user.isLocalImage()) {
+			user.setImageUrl(oAuth2UserInfo.getImageUrl());
+		}
+
+		existingUser.setUtbl(user);
 
 		return accountRepository.save(existingUser);
 	}
