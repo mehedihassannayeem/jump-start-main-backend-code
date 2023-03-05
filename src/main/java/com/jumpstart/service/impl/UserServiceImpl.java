@@ -1,6 +1,7 @@
 package com.jumpstart.service.impl;
 
 import java.io.IOException;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,13 +11,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.jumpstart.config.AppConstants;
 import com.jumpstart.entities.Account;
 import com.jumpstart.entities.AuthProvider;
+import com.jumpstart.entities.Role;
 import com.jumpstart.entities.User;
 import com.jumpstart.exception.ResourceNotFoundException;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.payload.UserDto;
 import com.jumpstart.repository.AccountRepository;
+import com.jumpstart.repository.RoleRepository;
 import com.jumpstart.repository.UserRepository;
 import com.jumpstart.security.TokenAuthenticationFilter;
 import com.jumpstart.security.TokenProvider;
@@ -56,6 +60,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	@Autowired
+	private RoleRepository roleRepository;
+
 	@Override
 	public Account getLoggedUser(UserPrincipal userPrincipal) {
 		return accountRepository.findById(userPrincipal.getId())
@@ -92,6 +99,11 @@ public class UserServiceImpl implements UserService {
 		user.setName(signUpRequest.getName());
 		user.setLocalImage(true);
 
+		// getting role
+		Role role = this.roleRepository.findById(AppConstants.NORMAL_USER).get();
+		// setting role
+		user.getRoles().add(role);
+
 		account.setUtbl(user);
 
 		accountRepository.save(account);
@@ -119,6 +131,12 @@ public class UserServiceImpl implements UserService {
 		oldUserData.setState(userUpdateData.getState());
 		oldUserData.setCity(userUpdateData.getCity());
 		oldUserData.setCountry(userUpdateData.getCountry());
+
+		// getting user all roles and setting from old one
+		Set<Role> roles = oldUserData.getRoles();
+		for (Role role : roles) {
+			userUpdateData.getRoles().add(role);
+		}
 
 		User userUpdatedData = this.userRepository.save(oldUserData);
 

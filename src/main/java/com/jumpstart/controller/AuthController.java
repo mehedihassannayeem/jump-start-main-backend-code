@@ -20,6 +20,7 @@ import com.jumpstart.payload.LoginRequest;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.repository.AccountRepository;
 import com.jumpstart.security.TokenProvider;
+import com.jumpstart.service.UserService;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -34,8 +35,8 @@ public class AuthController {
 	@Autowired
 	private TokenProvider tokenProvider;
 
-//	@Autowired
-//	private UserService userService;
+	@Autowired
+	private UserService userService;
 
 	// local user login method
 	@PostMapping("/sign-in")
@@ -67,7 +68,7 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
 
-//		this.userService.registerLocalUser(signUpRequest);
+		this.userService.registerLocalUser(signUpRequest);
 
 		return new ResponseEntity<ApiResponse>(new ApiResponse(true, "User registered successfully"),
 				HttpStatus.CREATED);

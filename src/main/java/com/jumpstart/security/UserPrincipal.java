@@ -1,7 +1,7 @@
 package com.jumpstart.security;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +33,9 @@ public class UserPrincipal implements OAuth2User, UserDetails {
 	}
 
 	public static UserPrincipal create(Account user) {
-		List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+		user.getUtbl().getRoles().forEach((role) -> authorities.add(new SimpleGrantedAuthority(role.getName())));
 
 		return new UserPrincipal(user.getAid(), user.getEmail(), user.getPassword(), authorities);
 	}
