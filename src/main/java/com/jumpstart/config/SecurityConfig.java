@@ -72,7 +72,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	// public urls
 	public static final String[] PUBLIC_URLS = { "/api/v1/auth/**", "/oauth2/**", "/", "/error", "/favicon.ico",
-			"/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg",	"/**/*.html", "/**/*.css", "/**/*.js" };
+			"/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.jpeg", "/**/*.html", "/**/*.css", "/**/*.js" };
 
 	// user urls
 	public static final String[] USER_URLS = { "/api/v1/users/**" };
@@ -96,6 +96,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.and()
 			.authorizeRequests()
 				.antMatchers(PUBLIC_URLS).permitAll()
+				.antMatchers(USER_URLS).hasRole("NORMAL")
+				.antMatchers(ADMIN_URLS).hasRole("ADMIN")
 //				.antMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
 					.anyRequest().authenticated()
 		.and()

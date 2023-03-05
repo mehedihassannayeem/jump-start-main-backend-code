@@ -20,15 +20,15 @@ spring:
         client:
           registration:
             google:
-              clientId: 938780475368-iqlivcd3esga14upqlhc20vupf9veb9g.apps.googleusercontent.com
-              clientSecret: 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
+              clientId: 222985258975-58b37ifihceeo8lt7sni8mm496p594bo.apps.googleusercontent.com
+              clientSecret: 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
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
                 - profile
             facebook:
-              clientId: 698009812111487
-              clientSecret: c59933bf1b763da80bddd5aff1853a75
+              clientId: 190413236938426
+              clientSecret: 20b419034ff580793519130424bf7765
               redirectUri: "{baseUrl}/oauth2/callback/{registrationId}"
               scope:
                 - email
