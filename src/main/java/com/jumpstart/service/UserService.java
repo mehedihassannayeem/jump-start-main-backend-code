@@ -6,8 +6,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jumpstart.entities.Account;
+import com.jumpstart.payload.AccountDto;
 import com.jumpstart.payload.PasswordChange;
+import com.jumpstart.payload.PasswordRetriving;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.payload.UserDto;
 import com.jumpstart.security.UserPrincipal;
@@ -21,7 +22,7 @@ public interface UserService {
 	boolean registrationInterceptor(SignUpRequest signUpRequest);
 
 	// getting currently logged user
-	Account getLoggedUser(UserPrincipal userPrincipal);
+	AccountDto getLoggedUser(UserPrincipal userPrincipal);
 
 	// getting currently logged user
 	UserDto getOldProfile(HttpServletRequest request);
@@ -35,7 +36,9 @@ public interface UserService {
 	// forget password OTP generator
 	boolean forgetPasswordInterceptor(String name, String email);
 
-	// forget password changing
+	// forget password changing and retriving
 	boolean forgetPasswordChange(PasswordChange passwordChange);
 
+	// forget password user credential
+	boolean forgetPasswordRetrive(PasswordRetriving passwordRetriving);
 }

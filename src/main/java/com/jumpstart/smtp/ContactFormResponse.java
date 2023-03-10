@@ -11,6 +11,7 @@ public class ContactFormResponse {
 
 	private String userName;
 	private String userEmail;
+	private String userInvoice;
 	private String userQuery;
 	private String userResId;
 	private String response;

@@ -21,6 +21,7 @@ import com.jumpstart.payload.ApiResponse;
 import com.jumpstart.payload.AuthResponse;
 import com.jumpstart.payload.LoginRequest;
 import com.jumpstart.payload.PasswordChange;
+import com.jumpstart.payload.PasswordRetriving;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.payload.UserOtpDto;
 import com.jumpstart.repository.AccountRepository;
@@ -156,7 +157,7 @@ public class AuthController {
 		}
 	}
 
-	// forget password module password changing method and reverting method
+	// forget password module password changing and retriving method
 	@PostMapping("/forget-user-profile-password-verify")
 	public ResponseEntity<ApiResponse> forgetUserPasswordChange(@Valid @RequestBody PasswordChange passwordChange) {
 
@@ -177,6 +178,24 @@ public class AuthController {
 			return new ResponseEntity<ApiResponse>(
 					new ApiResponse(false, "Created and Confirmed passwords are mismatched !"),
 					HttpStatus.NOT_ACCEPTABLE);
+		}
+
+	}
+
+	// forget password module password changing method and reverting method
+	@PostMapping("/forget-user-profile-password-verify-method-retrive")
+	public ResponseEntity<ApiResponse> forgetUserPasswordRetrive(
+			@Valid @RequestBody PasswordRetriving passwordRetriving) {
+
+		boolean passwordRetrive = this.userService.forgetPasswordRetrive(passwordRetriving);
+
+		if (passwordRetrive) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Hurry! Your account retrieved successfully"),
+					HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ApiResponse>(
+					new ApiResponse(false, "Something goes wrong! Please try again later."),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}

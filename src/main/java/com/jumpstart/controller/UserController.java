@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.jumpstart.entities.Account;
+import com.jumpstart.payload.AccountDto;
 import com.jumpstart.payload.ApiResponse;
 import com.jumpstart.payload.UserDto;
 import com.jumpstart.security.CurrentUser;
@@ -42,7 +42,7 @@ public class UserController {
 
 	// getting logged in user details
 	@GetMapping("/me")
-	public Account getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
+	public AccountDto getCurrentUser(@CurrentUser UserPrincipal userPrincipal) {
 		return this.userService.getLoggedUser(userPrincipal);
 
 	}

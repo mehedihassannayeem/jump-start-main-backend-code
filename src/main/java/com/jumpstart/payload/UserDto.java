@@ -1,5 +1,8 @@
 package com.jumpstart.payload;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Getter;
@@ -28,5 +31,7 @@ public class UserDto {
 	private String state;
 	private String city;
 	private String country;
+
+	private Set<RoleDto> roles = new HashSet<>();
 
 }

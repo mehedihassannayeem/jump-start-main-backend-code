@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jumpstart.entities.ContactUs;
 
-public interface ContactUsRepository extends JpaRepository<ContactUs, Integer> {
+public interface ContactUsRepository extends JpaRepository<ContactUs, String> {
 
 }

@@ -18,8 +18,12 @@ public class AppConstants {
 	public static final String STORE_SORT_BY = "sid";
 	public static final String STORE_SORT_DIR = "ASC";
 
-	// slack website constants variables
-	public static final String HOOKS_URL = "https://hooks.slack.com/services/";
-	public static final String APP_URL = "T04Q9GVB80L/B04Q45M5TJ9/k2Xho84kPpNwV1YJM9GluKKA";
+	// slack website constants variables for user queries
+	public static final String USER_HOOKS_URL = "https://hooks.slack.com/services/";
+	public static final String USER_APP_URL = "T04S0S33RD0/B04S0PK5S11/SENFI2I6uTS9TFWFPTtmlbec";
+
+	// slack website constants variables for admin respondent user queries
+	public static final String ADMIN_HOOKS_URL = "https://hooks.slack.com/services/";
+	public static final String ADMIN_APP_URL = "T04S0S33RD0/B04T5BESPAA/TIasB5qYHNpdzc4CaorPPcgZ";
 
 }

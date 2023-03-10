@@ -13,6 +13,7 @@ public class ResetProfilePasswordNotification {
 
 	private String resetUserName;
 	private String resetUserEmail;
+	private String resetUrl;
 	private Date resetUserRecoveryValidTime;
 
 }

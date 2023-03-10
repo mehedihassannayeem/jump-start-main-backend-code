@@ -1,5 +1,6 @@
 package com.jumpstart.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,8 @@ import com.jumpstart.payload.ApiResponse;
 @RestController
 @RequestMapping("/api/v1/users")
 public class TestUser {
+
+	@Autowired
 
 	@GetMapping("/home")
 	public ResponseEntity<ApiResponse> home() {

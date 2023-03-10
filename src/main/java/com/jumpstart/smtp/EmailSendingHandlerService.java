@@ -168,9 +168,9 @@ public class EmailSendingHandlerService {
 	public boolean resetEmailNotify(ResetProfilePasswordNotification user) {
 		boolean f = false;
 
-		final String emailSubject = user.getResetUserEmail() + " - your password has changed.";
+		final String emailSubject = user.getResetUserName() + " - your password has changed.";
 		final String emailBody = EmailSendingBody.passwordResetNotificationBody(user.getResetUserName(),
-				user.getResetUserEmail(), user.getResetUserRecoveryValidTime());
+				user.getResetUserEmail(), user.getResetUrl(), user.getResetUserRecoveryValidTime());
 
 		// getting the session object after authentication
 		Session session = Session.getInstance(hostProperties(), new Authenticator() {

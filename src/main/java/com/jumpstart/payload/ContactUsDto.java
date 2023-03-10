@@ -12,7 +12,7 @@ import lombok.Setter;
 @Getter
 public class ContactUsDto {
 
-	private int conid;
+	private String conid;
 
 	@NotEmpty(message = "Your Name can not be empty")
 	private String name;
@@ -23,6 +23,8 @@ public class ContactUsDto {
 	@NotEmpty(message = "Your queries can not be empty")
 	@Size(min = 15, max = 50000, message = "Your queries must be between 50 to 50000 characters in length")
 	private String queries;
+
+	private String invoice;
 
 	private String response;
 

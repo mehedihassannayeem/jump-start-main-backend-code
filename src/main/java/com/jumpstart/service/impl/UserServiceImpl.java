@@ -3,6 +3,7 @@ package com.jumpstart.service.impl;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,13 +17,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.jumpstart.config.AppConstants;
 import com.jumpstart.entities.Account;
 import com.jumpstart.entities.AuthProvider;
+import com.jumpstart.entities.PasswordRetrive;
 import com.jumpstart.entities.Role;
 import com.jumpstart.entities.User;
 import com.jumpstart.exception.ResourceNotFoundException;
+import com.jumpstart.payload.AccountDto;
 import com.jumpstart.payload.PasswordChange;
+import com.jumpstart.payload.PasswordRetriving;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.payload.UserDto;
 import com.jumpstart.repository.AccountRepository;
+import com.jumpstart.repository.PasswordRetriveRepository;
 import com.jumpstart.repository.RoleRepository;
 import com.jumpstart.repository.UserRepository;
 import com.jumpstart.security.TokenAuthenticationFilter;
@@ -34,6 +39,7 @@ import com.jumpstart.smtp.EmailSendingHandlerService;
 import com.jumpstart.smtp.ResetProfilePassword;
 import com.jumpstart.smtp.ResetProfilePasswordNotification;
 import com.jumpstart.smtp.SignUpUser;
+import com.namics.commons.random.RandomData;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -73,10 +79,15 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private HttpServletRequest httpServletRequest;
 
+	@Autowired
+	private PasswordRetriveRepository passwordRetriveRepository;
+
 	@Override
-	public Account getLoggedUser(UserPrincipal userPrincipal) {
-		return accountRepository.findById(userPrincipal.getId())
+	public AccountDto getLoggedUser(UserPrincipal userPrincipal) {
+		Account account = accountRepository.findById(userPrincipal.getId())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
+
+		return this.modelMapper.map(account, AccountDto.class);
 
 	}
 
@@ -98,7 +109,7 @@ public class UserServiceImpl implements UserService {
 	public boolean registrationInterceptor(SignUpRequest signUpRequest) {
 		boolean confirmedUser = false;
 		HttpSession signUpHS = httpServletRequest.getSession();
-		signUpHS.setMaxInactiveInterval(60);
+		signUpHS.setMaxInactiveInterval(5 * 60);
 
 		// calling the email control handler
 		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
@@ -108,8 +119,8 @@ public class UserServiceImpl implements UserService {
 		SignUpUser regUser = new SignUpUser(signUpRequest.getName(), signUpRequest.getEmail(), signupOTP,
 				validationTime);
 
-		confirmedUser = eshs.signupEmailSend(regUser);
-//		confirmedUser = true;
+//		confirmedUser = eshs.signupEmailSend(regUser);
+		confirmedUser = true;
 
 		if (confirmedUser) {
 			signUpHS.setAttribute("signupOTP", signupOTP);
@@ -211,7 +222,7 @@ public class UserServiceImpl implements UserService {
 	public boolean forgetPasswordInterceptor(String name, String email) {
 		boolean confirmedUser = false;
 		HttpSession resetPassHS = httpServletRequest.getSession();
-		resetPassHS.setMaxInactiveInterval(60);
+		resetPassHS.setMaxInactiveInterval(5 * 60);
 
 		// calling the email control handler
 		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
@@ -238,23 +249,68 @@ public class UserServiceImpl implements UserService {
 
 		boolean passwordChanged = false;
 
-		Account account = this.accountRepository.findByEmail(passwordChange.getForEmail()).get();
+		Account account = this.accountRepository.findByEmail(passwordChange.getForEmail())
+				.orElseThrow(() -> new ResourceNotFoundException("Account", "email", passwordChange.getForEmail()));
 		account.setPassword(this.passwordEncoder.encode(passwordChange.getConPassword()));
 
 		this.accountRepository.save(account);
+
+		// generating UUID for the table primary key
+		String pass_ret_id = UUID.randomUUID().toString();
+
+		// generating retriving url
+		String ret_uuid_url = "jSpr-" + RandomData.uuid() + "-" + RandomData.username().toLowerCase() + "-"
+				+ RandomData.uuid() + "-" + RandomData.zip() + "-" + RandomData.manufacturer().toLowerCase() + "-"
+				+ RandomData.countryCode().toLowerCase();
+
+		String url = ret_uuid_url.trim().replaceAll("\\s+", "-");
+
+		System.out.println(ret_uuid_url + "\r" + url + "\r\r\r");
 
 		// calling the email control handler
 		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
 		Date validationTime = eshs.PasswordRevertValidationTime();
 
 		ResetProfilePasswordNotification passwordNotification = new ResetProfilePasswordNotification(
-				account.getUtbl().getName(), account.getEmail(), validationTime);
+				account.getUtbl().getName(), account.getEmail(), url, validationTime);
 
-		passwordChanged = eshs.resetEmailNotify(passwordNotification);
-//		passwordChanged = true;
+//		passwordChanged = eshs.resetEmailNotify(passwordNotification);
+		passwordChanged = true;
+
+		// storing the retriving information if email has sent
+		if (passwordChanged) {
+			PasswordRetrive pr = new PasswordRetrive(pass_ret_id, url.substring(5), account.getEmail(), new Date(),
+					validationTime);
+			this.passwordRetriveRepository.save(pr);
+		}
 
 		return passwordChanged;
 
+	}
+
+	@Override
+	public boolean forgetPasswordRetrive(PasswordRetriving passwordRetriving) {
+
+		boolean profileRetrived = false;
+
+		PasswordRetrive passwordRetrive = this.passwordRetriveRepository.findByRetURL(passwordRetriving.getUrlPath())
+				.orElseThrow(() -> new ResourceNotFoundException("Profile", "retriving url",
+						passwordRetriving.getUrlPath()));
+
+		Account account = this.accountRepository.findByEmail(passwordRetrive.getRetEmail())
+				.orElseThrow(() -> new ResourceNotFoundException("Account", "email", passwordRetrive.getRetEmail()));
+		account.setPassword(this.passwordEncoder.encode(passwordRetriving.getConPassword()));
+
+		this.accountRepository.save(account);
+
+		profileRetrived = true;
+
+		// deleting the url as each url is only one time accessible and 1 day validated
+		this.passwordRetriveRepository.delete(passwordRetrive);
+
+		// in the future profile retrieved successfully mail
+
+		return profileRetrived;
 	}
 
 }

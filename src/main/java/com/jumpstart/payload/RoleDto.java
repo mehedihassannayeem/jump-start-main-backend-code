@@ -1,11 +1,13 @@
 package com.jumpstart.payload;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
+@NoArgsConstructor
 public class RoleDto {
-
-	private int id;
 
 	private String name;
 

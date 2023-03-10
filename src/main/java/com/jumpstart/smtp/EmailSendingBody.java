@@ -290,7 +290,7 @@ public class EmailSendingBody {
 
 
 
-	public static final String passwordResetNotificationBody (String name, String email, Date validation) {
+	public static final String passwordResetNotificationBody (String name, String email, String url, Date validation) {
 	
 	return "<html>\r\n"
 			+ "\r\n"
@@ -433,11 +433,11 @@ public class EmailSendingBody {
 			+ "        <div id=\"TKU93LXB5f\">\r\n"
 			+ "            <img src=\"https://images2.imgbox.com/89/c5/xPz7zFNI_o.png\" alt=\"website logo\">\r\n"
 			+ "\r\n"
-			+ "            <a id=\"fKU93LXB5T\" href=\"http://localhost:3000/users/account-retriving/password-is-reverting-for/"+email+"\"\r\n"
+			+ "            <a id=\"fKU93LXB5T\" href=\"http://localhost:3000/users/account-retriving/password-is-reverting-for/"+url+"\"\r\n"
 			+ "                target=\"_blank\" rel=\"noopener noreferrer\">Revert The Password Change</a>\r\n"
 			+ "            <p class=\"J5lNR6N4gK\"><span>or</span></p>\r\n"
 			+ "            <p id=\"x6TjrXxPEH\">\r\n"
-			+ "                http://localhost:3000/users/account-retriving/password-is-reverting-for/<span>"+email+"</span></p>\r\n"
+			+ "                http://localhost:3000/users/account-retriving/password-is-reverting-for/<span>"+url+"</span></p>\r\n"
 			+ "            <p id=\"x7TjrXoPEH\">Valid till <span>"+validation+"</span></p>\r\n"
 			+ "        </div>\r\n"
 			+ "\r\n"

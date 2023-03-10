@@ -72,13 +72,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	// public urls
 	public static final String[] PUBLIC_URLS = { "/api/v1/auth/**", "/oauth2/**", "/", "/error", "/favicon.ico",
-			"/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.jpeg", "/**/*.html", "/**/*.css", "/**/*.js" };
+			"/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.jpeg", "/**/*.html", "/**/*.css", "/**/*.js",
+			"/api/v1/contact-us/form"};
 
 	// user urls
 	public static final String[] USER_URLS = { "/api/v1/users/**" };
 
 	// admin urls
-	public static final String[] ADMIN_URLS = {"/api/v1/admins/**"};
+	public static final String[] ADMIN_URLS = {"/api/v1/**"};
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

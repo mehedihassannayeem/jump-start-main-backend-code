@@ -20,9 +20,25 @@ public class SlackServiceImpl implements SlackService {
 	private RestTemplate restTemplate;
 
 	@Override
-	public void sendMessageToSlack(String message) {
+	public void sendUserQueries(String message) {
 
-		String channelUrl = AppConstants.HOOKS_URL + AppConstants.APP_URL;
+		String channelUrl = AppConstants.USER_HOOKS_URL + AppConstants.USER_APP_URL;
+
+		Map<String, String> messageBuilder = new HashMap<>();
+
+		HttpHeaders headers = new HttpHeaders();
+
+		// set header
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		messageBuilder.put("text", message);
+		HttpEntity<Map<String, String>> request = new HttpEntity<>(messageBuilder, headers);
+		restTemplate.postForEntity(channelUrl, request, String.class);
+	}
+
+	@Override
+	public void sendAdminResponse(String message) {
+
+		String channelUrl = AppConstants.ADMIN_HOOKS_URL + AppConstants.ADMIN_APP_URL;
 
 		Map<String, String> messageBuilder = new HashMap<>();
 

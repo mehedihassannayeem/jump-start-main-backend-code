@@ -1,8 +1,7 @@
 package com.jumpstart.entities;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -19,17 +18,18 @@ import lombok.Setter;
 public class ContactUs {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int conid;
+	@Column(name = "query_sl_no", unique = true)
+	private String conid;
 	private String name;
 	private String email;
+	private String invoice;
 
 	@Lob
 	private String queries;
 
 	@Lob
 	private String response;
-	private String res_at;
+	private String resAt;
 	private String respondent;
 
 }

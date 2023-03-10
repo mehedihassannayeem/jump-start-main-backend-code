@@ -2,7 +2,10 @@ package com.jumpstart.service;
 
 public interface SlackService {
 
-	// send message to slack
-	void sendMessageToSlack(String message);
+	// send user queries to slack
+	void sendUserQueries(String message);
+
+	// send admin response to slack
+	void sendAdminResponse(String message);
 
 }
