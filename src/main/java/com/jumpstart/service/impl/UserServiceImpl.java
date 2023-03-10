@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ import com.jumpstart.security.TokenProvider;
 import com.jumpstart.security.UserPrincipal;
 import com.jumpstart.service.FileService;
 import com.jumpstart.service.UserService;
+import com.jumpstart.smtp.EmailSendingHandlerService;
+import com.jumpstart.smtp.SignUpUser;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -63,6 +66,9 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private RoleRepository roleRepository;
 
+	@Autowired
+	private HttpServletRequest httpServletRequest;
+
 	@Override
 	public Account getLoggedUser(UserPrincipal userPrincipal) {
 		return accountRepository.findById(userPrincipal.getId())
@@ -82,6 +88,31 @@ public class UserServiceImpl implements UserService {
 
 		return this.modelMapper.map(user, UserDto.class);
 
+	}
+
+	@Override
+	public boolean registrationInterceptor(SignUpRequest signUpRequest) {
+
+		boolean confirmedUser = false;
+		HttpSession session = httpServletRequest.getSession();
+
+		// calling the email control handler
+		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
+		String signupOTP = eshs.getSignUpOtp();
+
+		SignUpUser regUser = new SignUpUser(signUpRequest.getName(), signUpRequest.getEmail(), signupOTP);
+
+		confirmedUser = eshs.signupEmailSend(regUser, this.fileService.emailLogoPath());
+//		confirmedUser = true;
+
+		if (confirmedUser) {
+			session.setAttribute("signupOTP", signupOTP);
+			session.setAttribute("signupUser", signUpRequest);
+		}
+
+		System.out.println("\r\r\r------------------ OTP = " + signupOTP + "\r\r\r");
+
+		return confirmedUser;
 	}
 
 	@Override

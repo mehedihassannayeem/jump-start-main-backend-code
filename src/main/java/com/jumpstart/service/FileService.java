@@ -16,4 +16,7 @@ public interface FileService {
 
 	// file deleting method
 	void deleteFile(String filename) throws IOException;
+
+	// email image path
+	String emailLogoPath();
 }

@@ -1,5 +1,6 @@
 package com.jumpstart.controller;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jumpstart.payload.ApiResponse;
 import com.jumpstart.payload.AuthResponse;
 import com.jumpstart.payload.LoginRequest;
+import com.jumpstart.payload.SignUpOtp;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.repository.AccountRepository;
 import com.jumpstart.security.TokenProvider;
@@ -60,6 +62,10 @@ public class AuthController {
 
 	}
 
+	// local user sign up request method
+
+	// local user sign up OTP validating method
+
 	// local sign up method
 	@PostMapping("/sign-up")
 	public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
@@ -68,10 +74,40 @@ public class AuthController {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
 
-		this.userService.registerLocalUser(signUpRequest);
+		boolean flag = this.userService.registrationInterceptor(signUpRequest);
 
-		return new ResponseEntity<ApiResponse>(new ApiResponse(true, "User registered successfully"),
-				HttpStatus.CREATED);
+		if (flag) {
+			return new ResponseEntity<ApiResponse>(
+					new ApiResponse(true, signUpRequest.getName() + "-" + signUpRequest.getEmail()), HttpStatus.OK);
+		}
+
+		return new ResponseEntity<ApiResponse>(new ApiResponse(false,
+				"Check you email and try again! Unable to send OTP at your provided email address of "
+						+ signUpRequest.getEmail()),
+				HttpStatus.BAD_REQUEST);
+	}
+
+	@PostMapping("/sign-up-otp-verify")
+	public ResponseEntity<ApiResponse> registerUserOtp(@Valid @RequestBody SignUpOtp signUpOtp, HttpSession session) {
+
+		final String providedOtp = (String) session.getAttribute("signupOTP");
+		final String userOtp = signUpOtp.getUserOtp();
+		final SignUpRequest user = (SignUpRequest) session.getAttribute("signupUser");
+
+		if (providedOtp == null) {
+			return new ResponseEntity<ApiResponse>(new ApiResponse(false, "Invalid Process !!! Start From Beginning"),
+					HttpStatus.DESTINATION_LOCKED);
+		} else
+
+		if (providedOtp != null && providedOtp.equals(userOtp)) {
+			this.userService.registerLocalUser(user);
+			session.invalidate();
+			return new ResponseEntity<ApiResponse>(new ApiResponse(true, "User registered successfully"),
+					HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<ApiResponse>(new ApiResponse(false, "Invalid OTP"), HttpStatus.BAD_REQUEST);
+		}
+
 	}
 
 }

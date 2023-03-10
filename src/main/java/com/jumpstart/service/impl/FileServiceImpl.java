@@ -19,6 +19,7 @@ import com.jumpstart.service.FileService;
 public class FileServiceImpl implements FileService {
 
 	public final String UPLOAD_DIR = new ClassPathResource("static/images/user-contents").getFile().getAbsolutePath();
+	public final String LOGO_DIR = new ClassPathResource("static/images/web-contents").getFile().getAbsolutePath();
 
 	public FileServiceImpl() throws IOException {
 
@@ -61,6 +62,11 @@ public class FileServiceImpl implements FileService {
 		File deletingFile = new File(deleteFile, filename);
 		deletingFile.delete();
 
+	}
+
+	@Override
+	public String emailLogoPath() {
+		return LOGO_DIR + File.separator + "logo.png";
 	}
 
 }

@@ -16,6 +16,8 @@ public interface UserService {
 	// register local user
 	void registerLocalUser(SignUpRequest signUpRequest);
 
+	boolean registrationInterceptor(SignUpRequest signUpRequest);
+
 	// getting currently logged user
 	Account getLoggedUser(UserPrincipal userPrincipal);
 
