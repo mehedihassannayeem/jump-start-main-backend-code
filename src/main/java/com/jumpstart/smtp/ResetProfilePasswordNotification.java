@@ -9,11 +9,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class SignUpUser {
+public class ResetProfilePasswordNotification {
 
-	private String signupUserName;
-	private String signupUserEmail;
-	private String signupUserOTP;
-	private Date signupUserOTPValidTime;
+	private String resetUserName;
+	private String resetUserEmail;
+	private Date resetUserRecoveryValidTime;
 
 }

@@ -1,6 +1,7 @@
 package com.jumpstart.service.impl;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import com.jumpstart.entities.AuthProvider;
 import com.jumpstart.entities.Role;
 import com.jumpstart.entities.User;
 import com.jumpstart.exception.ResourceNotFoundException;
+import com.jumpstart.payload.PasswordChange;
 import com.jumpstart.payload.SignUpRequest;
 import com.jumpstart.payload.UserDto;
 import com.jumpstart.repository.AccountRepository;
@@ -29,6 +31,8 @@ import com.jumpstart.security.UserPrincipal;
 import com.jumpstart.service.FileService;
 import com.jumpstart.service.UserService;
 import com.jumpstart.smtp.EmailSendingHandlerService;
+import com.jumpstart.smtp.ResetProfilePassword;
+import com.jumpstart.smtp.ResetProfilePasswordNotification;
 import com.jumpstart.smtp.SignUpUser;
 
 @Service
@@ -92,25 +96,27 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public boolean registrationInterceptor(SignUpRequest signUpRequest) {
-
 		boolean confirmedUser = false;
-		HttpSession session = httpServletRequest.getSession();
+		HttpSession signUpHS = httpServletRequest.getSession();
+		signUpHS.setMaxInactiveInterval(60);
 
 		// calling the email control handler
 		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
 		String signupOTP = eshs.getSignUpOtp();
+		Date validationTime = eshs.OtpValidationTime();
 
-		SignUpUser regUser = new SignUpUser(signUpRequest.getName(), signUpRequest.getEmail(), signupOTP);
+		SignUpUser regUser = new SignUpUser(signUpRequest.getName(), signUpRequest.getEmail(), signupOTP,
+				validationTime);
 
-		confirmedUser = eshs.signupEmailSend(regUser, this.fileService.emailLogoPath());
+		confirmedUser = eshs.signupEmailSend(regUser);
 //		confirmedUser = true;
 
 		if (confirmedUser) {
-			session.setAttribute("signupOTP", signupOTP);
-			session.setAttribute("signupUser", signUpRequest);
+			signUpHS.setAttribute("signupOTP", signupOTP);
+			signUpHS.setAttribute("signupUser", signUpRequest);
 		}
 
-		System.out.println("\r\r\r------------------ OTP = " + signupOTP + "\r\r\r");
+		System.out.println("\r\r\r------------------ OTP = " + signupOTP);
 
 		return confirmedUser;
 	}
@@ -123,7 +129,7 @@ public class UserServiceImpl implements UserService {
 		account.setPassword(signUpRequest.getPassword());
 		account.setProvider(AuthProvider.local);
 
-		account.setPassword(passwordEncoder.encode(account.getPassword()));
+		account.setPassword(this.passwordEncoder.encode(account.getPassword()));
 
 		// setting the user
 		User user = new User();
@@ -198,6 +204,56 @@ public class UserServiceImpl implements UserService {
 
 		// updating user
 		this.userRepository.save(oldUserData);
+
+	}
+
+	@Override
+	public boolean forgetPasswordInterceptor(String name, String email) {
+		boolean confirmedUser = false;
+		HttpSession resetPassHS = httpServletRequest.getSession();
+		resetPassHS.setMaxInactiveInterval(60);
+
+		// calling the email control handler
+		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
+		String resetPassOtp = eshs.getResetPassOtp();
+		Date validationTime = eshs.OtpValidationTime();
+
+		ResetProfilePassword profilePassword = new ResetProfilePassword(name, email, resetPassOtp, validationTime);
+
+		confirmedUser = eshs.resetEmailSend(profilePassword);
+//		confirmedUser = true;
+
+		if (confirmedUser) {
+			resetPassHS.setAttribute("resPassOTP", resetPassOtp);
+			resetPassHS.setAttribute("resPassUser", email);
+		}
+
+		System.out.println("\r\r\r------------------ OTP = " + resetPassOtp + "\r\r\r");
+
+		return confirmedUser;
+	}
+
+	@Override
+	public boolean forgetPasswordChange(PasswordChange passwordChange) {
+
+		boolean passwordChanged = false;
+
+		Account account = this.accountRepository.findByEmail(passwordChange.getForEmail()).get();
+		account.setPassword(this.passwordEncoder.encode(passwordChange.getConPassword()));
+
+		this.accountRepository.save(account);
+
+		// calling the email control handler
+		EmailSendingHandlerService eshs = new EmailSendingHandlerService();
+		Date validationTime = eshs.PasswordRevertValidationTime();
+
+		ResetProfilePasswordNotification passwordNotification = new ResetProfilePasswordNotification(
+				account.getUtbl().getName(), account.getEmail(), validationTime);
+
+		passwordChanged = eshs.resetEmailNotify(passwordNotification);
+//		passwordChanged = true;
+
+		return passwordChanged;
 
 	}
 

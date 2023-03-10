@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-public class SignUpOtp {
+public class UserOtpDto {
 
 	@NotBlank
 	@NotEmpty(message = "Your OTP can not be empty")
