@@ -260,7 +260,8 @@ public class EmailSendingHandlerService {
 
 		final String emailSubject = "Thanks for contacting us - " + response.getUserName();
 		final String emailBody = EmailSendingBody.userQueryResponseBody(response.getUserName(), response.getUserResId(),
-				response.getResponse(), response.getRespondent(), response.getUserEmail(), response.getUserQuery());
+				response.getResponse(), response.getRespondent(), response.getUserEmail(), response.getUserInvoice(),
+				response.getUserQuery());
 
 		// getting the session object after authentication
 		Session session = Session.getInstance(hostProperties(), new Authenticator() {

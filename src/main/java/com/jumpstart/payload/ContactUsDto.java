@@ -1,5 +1,6 @@
 package com.jumpstart.payload;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
@@ -24,12 +25,13 @@ public class ContactUsDto {
 	@Size(min = 15, max = 50000, message = "Your queries must be between 50 to 50000 characters in length")
 	private String queries;
 
+	@Nullable
 	private String invoice;
 
 	private String response;
 
 	private String res_at;
 
-	private String respondent;
+	private UserDto respondent;
 
 }

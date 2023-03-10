@@ -2,6 +2,7 @@ package com.jumpstart.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +37,9 @@ public class ContactUsController {
 
 	// admin responding method
 	@PostMapping("/response")
-	public ResponseEntity<ApiResponse> contactFormResponse(@Valid @RequestBody ContactUsDto contactUsDto) {
-		this.contactUsService.storeAdminResponse(contactUsDto);
+	public ResponseEntity<ApiResponse> contactFormResponse(@Valid @RequestBody ContactUsDto contactUsDto,
+			HttpServletRequest request) {
+		this.contactUsService.storeAdminResponse(contactUsDto, request);
 		return new ResponseEntity<ApiResponse>(new ApiResponse(true, "You have successfully respondent to "
 				+ contactUsDto.getEmail() + " for the querying id of " + contactUsDto.getConid()), HttpStatus.OK);
 	}
