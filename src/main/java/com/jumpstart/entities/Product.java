@@ -22,11 +22,31 @@ public class Product {
 	private String prosl;
 
 	private String proName;
+	private String spPrice;
+	private String regPrice;
+	private String model;
+	private String series;
+	private String partNo;
+	private String chipset;
+	private String capacity;
+	private String intrface;
+	private String dimension;
+	private String warranty;
+	private String quantity;
+
+	private Double rating;
+	private String imgUrl;
+
+	private boolean live;
+	private boolean stock;
 
 	@OneToOne
 	private ProductId pidtbl;
 
 	@OneToOne
 	private ProductCategory pcattbl;
+
+	@OneToOne
+	private ProductBrand pbantbl;
 
 }

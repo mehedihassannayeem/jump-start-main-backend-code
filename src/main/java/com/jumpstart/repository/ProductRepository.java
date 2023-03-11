@@ -6,4 +6,5 @@ import com.jumpstart.entities.Product;
 
 public interface ProductRepository extends JpaRepository<Product, String> {
 
+	// searching
 }

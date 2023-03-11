@@ -1,33 +1,41 @@
 package com.jumpstart.service;
 
+import java.util.List;
+
 import com.jumpstart.payload.ProductDto;
 
 public interface ProductService {
 
 	// add product
-	void addProduct(ProductDto productDto);
+	ProductDto addProduct(ProductDto productDto);
 
 	// get product
-	void getProduct(String proid);
+	ProductDto getProduct(String proid);
 
 	// get products ---------------------------------------------- pagination
-	void getProducts();
+	List<ProductDto> getProducts();
 
 	// update product
-	void updateProduct(ProductDto productDto);
+	ProductDto updateProduct(ProductDto productDto);
 
 	// delete product
 	void deleteProduct(String proid);
 
 	// get products category wise --------------------------------------- pagination
-	void getCategoryProducts(String catId);
+	List<ProductDto> getCategoryProducts(String catId);
 
 	// get products brand wise ---------------------------------------------
 	// pagination
-	void getBrandProducts(String brandId);
+	List<ProductDto> getBrandProducts(String brandId);
 
 	// get searched products ---------------------------------------------
 	// pagination
-	void getSearchedProducts(String keyword);
+	List<ProductDto> getSearchedProducts(String keyword);
+
+	// live toggle
+
+	// stock toggle
+
+	// quantity changing
 
 }
