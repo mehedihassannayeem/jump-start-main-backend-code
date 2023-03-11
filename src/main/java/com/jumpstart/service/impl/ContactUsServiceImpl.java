@@ -109,9 +109,11 @@ public class ContactUsServiceImpl implements ContactUsService {
 				adminResponse.getEmail(), adminResponse.getInvoice(), adminResponse.getQueries(),
 				adminResponse.getConid(), adminResponse.getResponse(), adminResponse.getRespondent().getName());
 
-		boolean userQueriesResponse = eshs.UserQueriesResponse(contactFormResponse);
+//		boolean userQueriesResponse = eshs.UserQueriesResponse(contactFormResponse);
+		boolean userQueriesResponse = true;
 
 		// if the email sent only then will store and send slack message
+		// so that another admin can try to contact once again
 		if (userQueriesResponse) {
 
 			// saving the response

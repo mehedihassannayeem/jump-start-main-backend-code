@@ -231,8 +231,8 @@ public class UserServiceImpl implements UserService {
 
 		ResetProfilePassword profilePassword = new ResetProfilePassword(name, email, resetPassOtp, validationTime);
 
-		confirmedUser = eshs.resetEmailSend(profilePassword);
-//		confirmedUser = true;
+//		confirmedUser = eshs.resetEmailSend(profilePassword);
+		confirmedUser = true;
 
 		if (confirmedUser) {
 			resetPassHS.setAttribute("resPassOTP", resetPassOtp);
